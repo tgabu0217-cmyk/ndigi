@@ -13,6 +13,7 @@ import { StatPanel } from "./StatPanel";
 import { SkillPanel } from "./SkillPanel";
 import { CopyBar } from "./CopyBar";
 import { NpcSheet } from "./NpcSheet";
+import { FolderPicker } from "./FolderPicker";
 
 const EMPTY_OVR: Overrides = { hp: null, mp: null, san: null, idea: null, know: null, initiative: null };
 
@@ -20,11 +21,13 @@ interface Props {
   isLoggedIn: boolean;
   npcId?: string; // 既存NPCを編集中の場合に渡す
   initialPayload?: SavedNpcPayload;
+  initialFolderId?: string | null;
   onSaved?: (id: string) => void;
 }
 
-export function NpcEditor({ isLoggedIn, npcId, initialPayload, onSaved }: Props) {
+export function NpcEditor({ isLoggedIn, npcId, initialPayload, initialFolderId, onSaved }: Props) {
   const [edition, setEditionRaw] = useState<Edition>(initialPayload?.edition ?? 6);
+  const [folderId, setFolderId] = useState<string | null>(initialFolderId ?? null);
   const [npc, setNpcRaw] = useState<NpcData>(initialPayload?.npc ?? emptyNpc());
   const [overrides, setOverridesRaw] = useState<Overrides>(initialPayload?.overrides ?? EMPTY_OVR);
   const [cmd, setCmdRaw] = useState<"CCB" | "CC">(initialPayload?.cmd ?? "CCB");
@@ -132,6 +135,7 @@ export function NpcEditor({ isLoggedIn, npcId, initialPayload, onSaved }: Props)
           job: npc.job,
           edition,
           data: payload,
+          folderId,
         }),
       });
       if (!res.ok) {
@@ -146,7 +150,7 @@ export function NpcEditor({ isLoggedIn, npcId, initialPayload, onSaved }: Props)
     } finally {
       setSaving(false);
     }
-  }, [npc, edition, overrides, statOrderKey, cmd, secretMode, npcId, onSaved]);
+  }, [npc, edition, overrides, statOrderKey, cmd, secretMode, npcId, onSaved, folderId]);
 
   return (
     <div className="mx-auto min-h-screen max-w-[600px] bg-white">
@@ -157,6 +161,15 @@ export function NpcEditor({ isLoggedIn, npcId, initialPayload, onSaved }: Props)
         db={npc.db}
         onChange={(f, v) => setNpc((p) => ({ ...p, [f]: v }))}
       />
+      {isLoggedIn && (
+        <FolderPicker
+          folderId={folderId}
+          onChange={(v) => {
+            setSaved(false);
+            setFolderId(v);
+          }}
+        />
+      )}
       <StatOrderPanel statOrderKey={statOrderKey} onChange={setStatOrderKey} />
       <OutputOptionsPanel secretMode={secretMode} onChange={setSecretMode} />
       <DerivedPanel

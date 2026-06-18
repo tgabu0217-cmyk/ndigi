@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { LogoutButton } from "@/components/auth/LogoutButton";
-import { NpcList } from "@/components/dashboard/NpcList";
+import { FolderBrowser } from "@/components/dashboard/FolderBrowser";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -11,11 +10,6 @@ export default async function DashboardPage() {
   if (!userData.user) {
     redirect("/");
   }
-
-  const { data: npcs, error } = await supabase
-    .from("npcs")
-    .select("id, name, job, edition, updated_at")
-    .order("updated_at", { ascending: false });
 
   return (
     <div className="mx-auto min-h-screen max-w-[600px] bg-white">
@@ -27,18 +21,7 @@ export default async function DashboardPage() {
         <LogoutButton />
       </div>
 
-      <div className="p-3">
-        <Link
-          href="/editor"
-          className="mb-4 block rounded border border-neutral-900 bg-neutral-900 px-4 py-2.5 text-center text-sm font-bold text-white"
-        >
-          + 新しいNPCを作成
-        </Link>
-
-        {error && <div className="text-sm text-red-600">一覧の取得に失敗しました: {error.message}</div>}
-
-        <NpcList initialNpcs={npcs ?? []} />
-      </div>
+      <FolderBrowser />
     </div>
   );
 }

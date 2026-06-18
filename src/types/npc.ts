@@ -50,6 +50,33 @@ export interface NpcRow {
   job: string | null;
   edition: Edition;
   data: SavedNpcPayload;
+  folder_id: string | null;
   created_at: string;
   updated_at: string;
+}
+
+// Supabase の folders テーブル行
+export interface FolderRow {
+  id: string;
+  user_id: string;
+  name: string;
+  parent_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// 一覧表示用の軽量な型
+export interface NpcListItem {
+  id: string;
+  name: string;
+  job: string | null;
+  edition: Edition;
+  folder_id: string | null;
+  updated_at: string;
+}
+
+export interface FolderListItem {
+  id: string;
+  name: string;
+  parent_id: string | null;
 }

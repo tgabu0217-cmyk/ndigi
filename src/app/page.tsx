@@ -1,30 +1,27 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { LoginButtons } from "@/components/auth/LoginButtons";
+import { LogoutButton } from "@/components/auth/LogoutButton";
+import { FolderBrowser } from "@/components/dashboard/FolderBrowser";
 
-export default async function Home() {
+export default async function DashboardPage() {
   const supabase = await createClient();
-  const { data } = await supabase.auth.getUser();
+  const { data: userData } = await supabase.auth.getUser();
 
-  if (data.user) {
-    redirect("/dashboard");
+  if (!userData.user) {
+    redirect("/");
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-50 p-6">
-      <div className="w-full max-w-sm rounded-lg border border-neutral-200 bg-white p-8 shadow-sm">
-        <h1 className="mb-1 text-center text-xl font-bold">CoC NPC Digitizer</h1>
-        <p className="mb-6 text-center text-sm text-neutral-500">
-          クトゥルフ神話TRPGのNPCをすばやくデジタル化
-        </p>
-        <LoginButtons />
-        <div className="mt-6 text-center">
-          <Link href="/editor" className="text-xs text-neutral-500 underline">
-            ログインせずに使う（保存機能なし）
-          </Link>
+    <div className="mx-auto min-h-screen max-w-[600px] bg-white">
+      <div className="flex items-center justify-between border-b border-neutral-300 p-3">
+        <div>
+          <div className="text-sm font-bold">マイページ</div>
+          <div className="text-xs text-neutral-500">{userData.user.email ?? userData.user.id}</div>
         </div>
+        <LogoutButton />
       </div>
+
+      <FolderBrowser />
     </div>
   );
 }

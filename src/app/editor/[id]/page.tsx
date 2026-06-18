@@ -20,5 +20,12 @@ export default async function EditNpcPage({ params }: { params: Promise<{ id: st
 
   const payload = data.data as SavedNpcPayload;
 
-  return <NpcEditor isLoggedIn={true} npcId={id} initialPayload={payload} />;
+  return (
+    <NpcEditor
+      isLoggedIn={true}
+      npcId={id}
+      initialPayload={payload}
+      initialFolderId={data.folder_id}
+    />
+  );
 }
