@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { validateNpcPayload } from "@/lib/validate-npc";
 import { checkRateLimit } from "@/lib/rate-limit";
 
-export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(request: Request, _context?: unknown) { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
   const { data: userData, error: userErr } = await supabase.auth.getUser();
@@ -20,7 +20,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   return NextResponse.json({ npc: data });
 }
 
-export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(request: Request) { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
   const { data: userData, error: userErr } = await supabase.auth.getUser();
